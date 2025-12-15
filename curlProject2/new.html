@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APPDEV Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body bgcolor="LightGreen" onload="getData()">
+    <p id="text">Welcome to APPDEV!</p>
+    <canvas id="myChart" width="400" height="200"></canvas>
+   
+
+    <script>
+        function getData() {
+            fetch("http://www.cc.puv.fi/~e2401855/record.txt")
+            .then(response => response.text())
+            .then(text => {
+                dispData(text);
+                drawChart(text); 
+            })
+            .catch(err => console.log(err));
+        }
+
+        function dispData(data) {
+            let p = document.getElementById("text");
+            let lines = data.split('\n');
+            p.innerHTML = "";
+
+            for (let i = 0; i < lines.length; i++) {
+                p.innerHTML += lines[i] + "<br>";
+            }
+        }
+
+        function drawChart(data) {
+            let lines = data.trim().split("\n");
+            let labels = [];
+            let value1 = [];
+            let value2 = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                let parts = lines[i].split(",");
+                if (parts.length >= 3) {
+                    labels.push(parts[0]);
+                    value1.push(parseFloat(parts[1]));
+                    value2.push(parseFloat(parts[2]));
+                }
+            }
+
+            const ctx = document.getElementById("myChart").getContext("2d");
+
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Record Data 1",
+                        data: value1,
+                        backgroundColor: "rgba(54,162,235,0.7)",
+                        borderColor: "rgba(54,162,235,1)",
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: "Record Data 2",
+                        data: value2,
+                        backgroundColor: "pink",
+                        borderColor: "pink",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
